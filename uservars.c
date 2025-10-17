@@ -102,6 +102,17 @@ std::string cUserVar::EvaluateConnectCmd(const cEvent* e)
     struct    sockaddr_in servaddr;  /*  socket address structure  */
     char      buffer[MAX_LINE];      /*  character buffer          */
 
+    varparser.compExpr = varparser.cmdArgs;
+    std::string resexp = EvaluateCompExpr(e, true);
+    std::size_t length = resexp.length();
+    if (length + 2 > sizeof(buffer)) {
+        LogFile.eSysLog("error formatting arguments");
+        return "";
+    }
+    memcpy(buffer, resexp.c_str(), length);
+    buffer[length++] = '\n';
+    buffer[length] = '\0';
+
     if ((conn_s = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         LogFile.eSysLog("Error creating listening socket");
         return "";
@@ -123,11 +134,8 @@ std::string cUserVar::EvaluateConnectCmd(const cEvent* e)
         return "";
     }
 
-    varparser.compExpr = varparser.cmdArgs;
-    std::string resexp = EvaluateCompExpr(e, true);
-    sprintf(buffer, "%s\n", resexp.c_str());
-    Writeline(conn_s, buffer, strlen(buffer));
-    Readline(conn_s, buffer, MAX_LINE - 1);
+    Writeline(conn_s, buffer, length);
+    Readline(conn_s, buffer, sizeof(buffer));
 
     close(conn_s);
     return buffer;

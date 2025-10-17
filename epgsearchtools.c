@@ -154,10 +154,14 @@ bool MatchesSearchMode(const char* szTest, const char* searchText, int mode, con
             afuzzy_free(&af);
             return (res > 0);
         } else if (mode >= 10 && mode <= 15) {
-            int testvalue = atoi(szTest);
-            int value = atoi(searchText);
-            if (value == 0) return true;
-
+            char* end = NULL;
+            long testvalue = strtol(szTest, &end, 10);
+            if (!end || end == szTest) // no or invalid number
+                return false;
+            end = NULL;
+            long value = strtol(searchText, &end, 10);
+            if (!end || end == searchText) // no or invalid number
+                return false;
             if (mode == 10) // less
                 return testvalue < value;
             else if (mode == 11) // less or equal
@@ -358,13 +362,59 @@ std::string strreplace(
     const std::string& replaceWithWhat)
 {
     while (1) {
-        const int pos = result.find(replaceWhat);
-        if (pos == -1) break;
+        const std::size_t pos = result.find(replaceWhat);
+        if (pos == std::string::npos) break;
         result.replace(pos, replaceWhat.size(), replaceWithWhat);
     }
     return result;
 }
 
+char* encodeSpecialCharacters(const char* s, bool nestedColon)
+{
+    char* result = strdup(s);
+    while (strchr(result, '|')) result = strreplace(result, "|", PIPE);
+    if (nestedColon) {
+        while (strchr(result, ':')) result = strreplace(result, ":", COLON);
+    } else {
+        result = strreplace(result, ':', '|');
+    }
+    return result;
+}
+
+std::string encodeSpecialCharacters(std::string s, bool nestedColon)
+{
+    s = ReplaceAll(s, "|", PIPE);
+    if (nestedColon) {
+        s = ReplaceAll(s, ":", COLON);
+    } else {
+        s = ReplaceAll(s, ":", "|");
+    }
+    return s;
+
+}
+
+char* decodeSpecialCharacters(const char* s, bool nestedColon)
+{
+    char* result = strdup(s);
+    if (nestedColon) {
+        while (strstr(result, COLON)) result = strreplace(result, COLON, ":");
+    } else {
+        result = strreplace(result, '|', ':');
+    }
+    while (strstr(result, PIPE)) result = strreplace(result, PIPE, "|");
+    return result;
+}
+
+std::string decodeSpecialCharacters(std::string s, bool nestedColon)
+{
+    if (nestedColon) {
+        s = ReplaceAll(s, COLON, ":");
+    } else {
+        s = ReplaceAll(s, "|", ":");
+    }
+    s = ReplaceAll(s, PIPE, "|");
+    return s;
+}
 
 void sleepMSec(long ms)
 {
@@ -844,6 +894,11 @@ int msprintf(char **strp, const char *fmt, ...)
     va_start(ap, fmt);
     int res = vasprintf(strp, fmt, ap);
     va_end(ap);
+    if (res < 0) {
+        // to avoid free() on an undefined pointer, since the manual states:
+        // "...will return -1, and the contents of strp are undefined"
+        *strp = NULL;
+    }
     return res;
 }
 
@@ -868,24 +923,20 @@ std::string GetCodeset()
 }
 
 /*  Read a line from a socket  */
-ssize_t Readline(int sockd, char *vptr, size_t maxlen)
+ssize_t Readline(int sockd, char *vptr, size_t size)
 {
     size_t n, rc;
-    char    c, *buffer;
+    char c, *buffer;
 
-    buffer = vptr;
-
-    for (n = 1; n < maxlen; n++) {
+    if (!(buffer = vptr) || size-- < 1) return 0;
+    for (n = 0; n < size; n++) {
 
         if ((rc = read(sockd, &c, 1)) == 1) {
             if (c == '\n')
                 break;
             *buffer++ = c;
         } else if (rc == 0) {
-            if (n == 1)
-                return 0;
-            else
-                break;
+            break;
         } else {
             if (errno == EINTR)
                 continue;

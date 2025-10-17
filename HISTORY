@@ -1,10 +1,44 @@
 VDR Plugin 'epgsearch' Revision History
 ---------------------------------------
+2025-10-26
+- removed 'HISTORY.DE', as no more changes have been recorded since years
+- revised German translation w.r.t. typos, readability, and style
+- changed menus to use 'tr()' string constants, where possible
+- fixed typos in 'tr()' strings (and other code locations accidentally found)
+- fixed wrong pairs of 'new' operator and 'free()' (instead of 'delete' operator)
+- fixed some memory leaks, like multiple 'strdup()' assignments with just one 'free()'
+- fixed some buffer operations without (correct) capacity checks
+- simplified 'free()' and 'delete' by skipping unnecessary null-pointer test
+- consolidated encoding and decoding of special characters ':' and '|'
+- removed further 'using std' directives missed last time
+- removed orphan 'options' in searches and blacklists (see Version 0.9.15)
+- aligned capabilities (parameter sets) of searches, templates, and blacklists
+- sorted class attributes to have related variables close to each other
+- revised constructors and copy methods to use the same sequence of member access
+- fixed some issues encountered during rework, like template fields not copied
+- supplied some missing parameter ranges in menus, where reasonable
+- rejected duplicate channel-groups names (menu: rename; SVDRP: NEWC, RENC)
+- added parental rating as new search parameter
+- added flexible matching criteria for content descriptors
+- refactored missing EPG categories into category matching mode
+- refactored some identifiers with hard-to-conceive semantics
+- revised 'AddHelp()' to consider menu context, not just position
+- revised man pages ('doc-src' files) to comply to POD syntax
+- updated manuals to cover new (or yet undocumented) features, observing 'man-pages(7)' guidelines
+- added missing German man pages. i.e., 'createcats' and 'epgsearch(4)'
+- disabled insertion of color codes for pages in 'doc' directory
+- added 'Q' macros to 'Makefile' for more silent builds
+- revised detection of 'pin' plugin in build space
+- added POD check to the creation of man files
+
+2025-09-26
+- Makefile: make WITHOUT_xxx variables effective (madmartin)
+
 2025-07-25
 - replace Matches(time,true) with CalcStartStopTime
 
 2025-06-27
-- delete contentfilter if not set again in EDIS
+- delete contents filter if not set again in EDIS
 - changes in Ext::Parse provided by Stefan Hofmann
 - updated corresponding Manual entries
 - more error checking - avoid crash
@@ -25,12 +59,12 @@ thanks to Stefan Hofmann:
 
 2025-03-20
 fixes:
-- fix timerdone processing if EPG has changed
+- fix timer-done processing if EPG has changed
 - prevent crash in vdr 2.7.4
 
 2024-09-13; Version 2.4.3
 fixes:
-- fix deprecated funtion GetEvent()
+- fix deprecated function GetEvent()
 
 2024-04-07
 fixes:
@@ -53,18 +87,18 @@ fixes:
 
 2023-01-09; Version 2.4.2
 new:
-- Use perlregex-library pcre2 if available
+- Use Perl regex-library pcre2 if available
 fixes:
 - timers not marked as done if 2 recordings stop same time
 - remove dead code
-- update spanish translation
+- update Spanish translation
 - fix memory leaks
-- do not lose recordingtime at change to winter time (kfb77)
+- do not lose recording time at change to winter time (kfb77)
 
 2022-02-01
 new:
-- Evaluate vdr's Errorcount (vdr > 2.5.x)
-  New config "Allowed Errors"
+- Evaluate VDR's Error count (vdr > 2.5.x)
+  New config "Allowed errors"
 - Allow missing timer-Object in Recording-Done-Processing
   (vdr > 2.5.x compatibility)
 
@@ -75,7 +109,7 @@ fixes:
 
 2021-05-24; Version 2.4.1
 fixes:
-- Fixed conflictcheck for encrypted channels with internal CAMs
+- Fixed conflict check for encrypted channels with internal CAMs
 - Fixed compiling with gcc11
 - Updated deprecated calls to SetItemEvent
 - Temporally(?) added #define DISABLE_TEMPLATES_COLLIDING_WITH_STL for
@@ -85,15 +119,15 @@ fixes:
 new:
 - Improved handling of remote timers
 - Replace auto_ptr with unique_ptr for c++11 (kfb77@vdr-portal.de)
-- Delay threads after pluginstart 10 secs (configurable)
-- Changed fgets to allow compiling with clang
+- Delay threads after plugin start by 10 secs (configurable)
+- Changed fgets() to allow compiling with clang
 - Clarified "avoid repeats". Forced subtitle-comparison is named "yes" again
   New option "allow empty"
 fixes:
 - Fixed several lock sequence errors
-- Fix utf-8 encoding in docs and manpages (kfb77 and seahawk1986@vdr-portal.de)
+- Fix utf-8 encoding in docs and man pages (kfb77 and seahawk1986@vdr-portal.de)
 - Fixed possible format overflow
-- Fixed displaying NAME in generated manpages thanks to etobi
+- Fixed displaying NAME in generated man pages thanks to etobi
 
 2018-04-16; Version 2.4.0
 new:
@@ -105,17 +139,17 @@ new:
 - Added operator to cListObject derived classes by jasminj@vdr-portal.de
 - Add patches/vdr.epgsearch-exttimeredit-2.3.5.diff by Dietmar Spingler <d_spingler@gmx.de>
 - Adapt new makefile style of VDR 2.3.6 by TomJoad@vdr-portal.de
-- Use vdr timerids instead of index by TomJoad@vdr-portal.de
+- Use VDR timer IDs instead of index by TomJoad@vdr-portal.de
 - Fix many lock sequences by TomJoad@vdr-portal.de
 - New vdr.epgsearch-exttimeredit-2.3.6.diff (thx to Claus Muus)
 - Add conflict check for remote timers by Johann Friedrichs <johann.friedrichs@web.de>
 - Search timers should create only local timers
 - Use namespace for svdrpclient
 - Add icon for inactive timer
-- Use separate thread for recdone processing
+- Use separate thread for rec-done processing
 - get rid of some casts
 - unified indentation
-- Preserve timerflags in searchtimerupdate
+- Preserve timer flags in searchtimerupdate
 
 2017-05-xx; Version 2.3.1 - development release
 new:
@@ -151,12 +185,12 @@ new:
 
 2013-03-xx; Version 1.0.1 - maintenance release
 new:
-- new Makefile style as introduced in vdr-1.7.36, the old Makefile still exists as 
-  Makefile.before.1.7.36 for previous vdr builds. Many thanks to Copperhead, Stefan 
+- new Makefile style as introduced in vdr-1.7.36, the old Makefile still exists as
+  Makefile.before.1.7.36 for previous vdr builds. Many thanks to Copperhead, Stefan
   Hofmann and Christopher Reimer for their work.
 - implement device bonding in conflict checker, thanks to Joachim Wilke for providing a patch
-- new service interface "Epgsearch-enablesearchtimers-v1.0" to switch the search timers 
-  background update on/off. Updated the sample in source/vdr-epgsearchclient-0.0.2.tgz 
+- new service interface "Epgsearch-enablesearchtimers-v1.0" to switch the search timers
+  background update on/off. Updated the sample in source/vdr-epgsearchclient-0.0.2.tgz
   to use the new service.
 - new format specifier like %02i in the epgsearchcats.conf, thanks to Joe_D for providing
   a patch ('man 5 epgsearchcats.conf' for more information).
@@ -164,11 +198,11 @@ new:
   recordings with vanished search timers.
 - when channel separators are displayed the filling '-' can cause problems in the output
   of graphlcd. Set PLUGIN_EPGSEARCH_SEP_ITEMS=--- in your Make.config to avoid this. Most
-  skins (except classic, st:tng)  will translate '---' into a single line anyway 
+  skins (except classic, st:tng)  will translate '---' into a single line anyway
   (Feature #857, thanks to 'KeineAhnung' for providing a patch)
 - search timers are now processed by their descending timer priority. Search timers with the same priority
-  are sorted by their search term. Thanks to Anonym for providing a patch 
-- new bugtracker at http://projects.vdr-developer.org/projects/plg-epgsearch - thanks to Tobias Grimm
+  are sorted by their search term. Thanks to Anonym for providing a patch
+- new bug tracker at http://projects.vdr-developer.org/projects/plg-epgsearch - thanks to Tobias Grimm
 - dropped old code for vdr < 1.6.0, thanks to Ville Skyttä for whole pile of patches
 - updated MainMenuHooks patch to 1.0.1
 - czech translation, thanks to Radek Stastny
@@ -234,10 +268,10 @@ new:
   details.
 - new command 'length' within internal variables: this returns the length of the given arguments
 - in memory to pat: french translation update, thanks to Patrice Staudt
-- italian translation update, thanks to Diego Pierotto
-- finnish translation update, thanks to Rolf Ahrenberg and Ville Skyttä
-- new lithuanian translation, thanks to Valdemaras Pipiras
-- new slovak translation, thanks to Milan Hrala
+- Italian translation update, thanks to Diego Pierotto
+- Finnish translation update, thanks to Rolf Ahrenberg and Ville Skyttä
+- new Lithuanian translation, thanks to Valdemaras Pipiras
+- new Slovak translation, thanks to Milan Hrala
 - new SVDRP command 'MENU [NOW|PRG|SUM]' to call one of the main OSD menus or
   the summary of the current event. If any epgsearch menu is open a subsequent
   SVDRP call will close it again.
@@ -246,9 +280,9 @@ new:
 - Two events with both empty episode names are now handled different within the
   feature 'Avoid repeats'. This will result in more recordings, but ensures not to
   miss one only because of a buggy EPG.
-- searchtimers: if a timers filename results in an empty string or contains
+- search timers: if a timers filename results in an empty string or contains
   "!^invalid^!" it will be skipped for programming now.
-- Avoid repeats: The option 'Yes' for 'Compare subtitle' is now replaced with 'if present'.
+- Avoid repeats: The option 'yes' for 'Compare subtitle' is now replaced with 'if present'.
   With this setting epgsearch will classify two events only as equal if
   their episode names match and are not empty.
 - epgsearch now uses the shutdown handler (introduced in vdr 1.5.1) to prevent a
@@ -270,7 +304,7 @@ new:
 - some speed enhancements, thanks to Tobias Bratfisch for providing patches
 - if the VPS time differs from the start time of an event the VPS marker is now  'v'
   instead of 'V'
-- the first run of the background threads (searchtimer, switchtimer, conflict check) is now
+- the first run of the background threads (search timer, switch timer, conflict check) is now
   triggered by the first call to cPlugin::MainThreadHook instead of waiting 20s after
   VDRs startup.
 - The update check for manual timers does now ignore timers whose start or stop time was edited
@@ -284,13 +318,13 @@ new:
 - switch timers are now also visible in all search results EPG menus
 - Avoid repeats: in 'compare summary' one can now adjust the required match, default is 90%.
 - if there is no subtitle the filename now defaults to YYYY.MM.DD-HH.MM-Weekday to ease
-  sorting in some frontends, thanks to Dominic Evans for providing a patch
+  sorting in some front ends, thanks to Dominic Evans for providing a patch
 - should now compile in FreeBSD, thanks to Juergen Lock for providing a patch
 - new SVDRP command UPDT to reload the list of search timers in epgsearch.conf
 
 fixes:
 - fixed a crash when pressing 'Ok' in an empty timers done menu
-- fixed a crash when using the progressbar and events with 0 duration exist, thanks
+- fixed a crash when using the progress bar and events with 0 duration exist, thanks
   to egal@vdrportal
 - when an incomplete recording triggers a search timer update for a search timer
   with 'avoid repeats' now running events are ignored for the repeats.
@@ -299,7 +333,7 @@ fixes:
 - fixed line breaks in SVDRP command LSTT, thanks to Andreas Mair for providing a
   patch
 - improved response time when canceling the search timer thread
-- fixed a segfault occurring when navigating to a userdefined epg menu that has expired
+- fixed a segfault occurring when navigating to a user-defined epg menu that has expired
   in the meantime, thanks to Mike Constabel for reporting
 - the day selection menu in the timer edit menu was hidden
 - if an event was matched by multiple search timers with 'announce only' setting, it was
@@ -420,9 +454,9 @@ new:
   data is part of the EPG. See the section <epgsearchcats.conf> in the documentation
   for a complete list of all search modes.
 - The edit menu for search timers has now a switch 'Ignore missing categories' for
-  extended EPG categories. If set to 'Yes' this tells epgsearch that a missing EPG
+  extended EPG categories. If set to 'yes' this tells epgsearch that a missing EPG
   category should not exclude an event from the results. Caution: Using this without
-  any other criterions could flood your timers.
+  any other criteria could flood your timers.
 - Search timers have now an 'auto delete' feature. The edit menu therefor provides:
     * after x recordings, or
     * after x days after first recording
@@ -859,7 +893,7 @@ new:
   not needed anymore (if vdr >= 1.3.44). These are:
   * timers, that are no more valid because of EPG changes. This should avoid
     the double recordings after an EPG change.
-  * timers, that do not match the search criterions after a change of the
+  * timers, that do not match the search criteria after a change of the
     search timer. So you don't have to remove them manually anymore.
   If the user has modified start or stop of such a timer, it will be kept.
 - new search mode 'fuzzy' in searches. This performs a fuzzy search
@@ -1379,7 +1413,7 @@ fixes:
 - french translation, thanks to Patrice Staudt
 - finnish translation by Rolf Ahrenberg
 - search term can now be empty to search for anything, that matches
-  other criterions searchtimers
+  other criteria searchtimers
 - Fixed editing of criterion 'to channel', thanks to gunnar@vdrportal
 
 2005-01-11: Version 0.0.6
@@ -1442,7 +1476,7 @@ fixes:
 - Added up to 4 user defined times besides "now" and "next"
   (you can use this for example for "primetime" or "late night")
 - Renamed plugin main entry from "EPG search" to "Search"
-- Added duration to search criterions
+- Added duration to search criteria
 - Added commands menu in 'search results' list
 - Behaviour of red key is now the same in 'search results' as
   in main menu of the plugin.

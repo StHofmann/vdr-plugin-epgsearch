@@ -284,21 +284,21 @@ public:
             if (diff > 0)
                 buffer = cString::sprintf(tr("in %02ldd"), long(diff / SECSINDAY));
             else
-                buffer = cString::sprintf("%02ldd", long(-diff / SECSINDAY));
+                buffer = cString::sprintf(tr("%02ldd"), long(-diff / SECSINDAY));
             res = buffer;
         } else if (labs(diff) >= (60 * 60)) {
             cString buffer;
             if (diff > 0)
                 buffer = cString::sprintf(tr("in %02ldh"), long(diff / (60 * 60)));
             else
-                buffer = cString::sprintf("%02ldh", long(-diff / (60 * 60)));
+                buffer = cString::sprintf(tr("%02ldh"), long(-diff / (60 * 60)));
             res = buffer;
         } else {
             cString buffer;
             if (diff > 0)
                 buffer = cString::sprintf(tr("in %02ldm"), long(diff / 60));
             else
-                buffer = cString::sprintf("%02ldm", long(-diff / 60));
+                buffer = cString::sprintf(tr("%02ldm"), long(-diff / 60));
             res = buffer;
         }
         if (escapeStrings) return "'" + EscapeString(res) + "'";
